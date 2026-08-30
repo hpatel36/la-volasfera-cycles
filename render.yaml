@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: la-volasfera-cycles
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /health
+    autoDeploy: true
+
