@@ -44,7 +44,7 @@ def load_la_volasfera() -> dict[str, DegreeDefinition]:
 
 
 def degree_key(position_degree: str) -> str:
-    """Convert an Astrium-style position such as 10CP20 to its degree key."""
+    """Convert a compact zodiac position such as 10CP20 to its degree key."""
     normalized = str(position_degree).strip().upper()
     if len(normalized) < 3:
         raise ValueError(f"invalid zodiac position: {position_degree}")

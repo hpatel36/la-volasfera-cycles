@@ -17,7 +17,7 @@ The project currently uses Python 3.13.6.
 ```bat
 py -3 -m venv .venv
 .\.venv\Scripts\activate.bat
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
 python -m flask --app app run --debug
 ```
 
@@ -28,6 +28,12 @@ Run the tests with:
 
 ```bat
 python -m pytest
+```
+
+Run the strict deployment smoke test against downloaded ephemeris files with:
+
+```bat
+python scripts\verify_release.py --ephe-path ephe
 ```
 
 ## Swiss Ephemeris data
@@ -57,29 +63,38 @@ python -m flask --app app run --debug
 
 `calculations/node_stations.py` calculates True North Node stationary events
 from Swiss Ephemeris data at request time. It does not use a deployed database.
-The default station selector reproduces the historical AstriumLab event set;
+The default station selector uses a UTC-day-boundary event-selection method;
 an exhaustive scanner is also available for inspecting every stable speed sign
-change, including short-lived pairs outside that compatibility set.
+change, including short-lived pairs outside that selection.
 
 `calculations/cycles.py` supports transit, secondary, tertiary and minor
-timelines in both direct and converse directions. A full local regression
-generates all 35,002 compatibility events from 1400 through 2100 and compares
-them with a read-only AstriumLab database:
-
-```bat
-python scripts\regress_node_stations.py C:\path\to\astrology.db
-```
-
-The database is a development-only regression oracle and is never included in
-this repository or required by the deployed application.
+timelines in both direct and converse directions. Automated tests and a
+full-range development regression validate the calculation engine; no database
+is included in or required by the deployed application.
 
 ## Deployment
 
 The repository includes a `render.yaml` Blueprint for a free Render web
-service. The application must be fully tested, licensed, reviewed for private
-data, and made public before the Swiss Ephemeris-powered service is activated.
+service. Render uses the Python version pinned in `.python-version`, installs
+only the runtime dependencies, downloads and validates the two ephemeris files,
+and runs the application with Gunicorn. The service stores no submitted dates,
+accounts or calculation results. Render's filesystem is ephemeral, which is
+appropriate because the downloaded files are recreated on every build and the
+application has no database or user uploads.
+
+The repository must remain private until the final public-release review. Make
+it public before activating the Swiss Ephemeris-powered service so every user
+can obtain the corresponding AGPL source.
+
+## Project information
+
+- [Methodology](https://github.com/hpatel36/la-volasfera-cycles/blob/main/templates/information.html)
+- [Source references](SOURCES.md)
+- [Third-party notices](NOTICE.md)
+- [Complete licence](LICENSE)
 
 ## Licensing
 
-The project is intended to be distributed under the GNU Affero General Public
-License, version 3. See `LICENSE` and `NOTICE.md`.
+Copyright © 2026 Harish Patel. This project is distributed under the GNU
+Affero General Public License, version 3 or (at your option) any later version
+(`AGPL-3.0-or-later`). See `LICENSE` and `NOTICE.md`.

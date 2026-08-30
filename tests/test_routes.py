@@ -4,6 +4,8 @@ def test_homepage_loads(client):
     assert response.status_code == 200
     assert b"La Volasfera" in response.data
     assert b"Cycle Explorer" in response.data
+    assert b"Source code" in response.data
+    assert b"Methodology" in response.data
 
 
 def test_health_check(client):
@@ -11,6 +13,35 @@ def test_health_check(client):
 
     assert response.status_code == 200
     assert response.get_json() == {"status": "ok"}
+
+
+def test_project_information_pages_load(client):
+    expected_text = {
+        "/methodology": b"UTC-day boundaries",
+        "/sources": b"The Degrees of the Zodiac Symbolized",
+        "/licence": b"Harish Patel",
+    }
+    for path, text in expected_text.items():
+        response = client.get(path)
+        assert response.status_code == 200
+        assert text in response.data
+
+
+def test_complete_licence_text_is_served(client):
+    response = client.get("/licence/text")
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/plain"
+    assert b"GNU AFFERO GENERAL PUBLIC LICENSE" in response.data
+
+
+def test_security_headers_are_applied(client):
+    response = client.get("/")
+
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"
+    assert response.headers["Referrer-Policy"] == "no-referrer"
+    assert "frame-ancestors 'none'" in response.headers["Content-Security-Policy"]
 
 
 def test_required_ephemeris_is_configured(monkeypatch, tmp_path):

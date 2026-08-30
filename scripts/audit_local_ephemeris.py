@@ -1,8 +1,8 @@
 """Audit the minimal Swiss Ephemeris files needed for True Node stations.
 
 This is a local development audit. It copies candidate ephemeris files to a
-temporary directory and checks every NodeRetro row in AstriumLab without
-modifying that database.
+temporary directory and checks every NodeRetro row in a read-only reference
+database without modifying it.
 """
 
 from __future__ import annotations

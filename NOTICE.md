@@ -1,5 +1,11 @@
 # Third-party notices
 
+La Volasfera Cycle Explorer
+
+Copyright © 2026 Harish Patel
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+
 ## Swiss Ephemeris
 
 The calculation engine uses Swiss Ephemeris through the `pysweph` Python
@@ -19,4 +25,5 @@ La Volasfera Cycle Explorer is an independent project. It is not affiliated
 with or endorsed by Astrodienst AG.
 
 The complete application source is distributed under the GNU Affero General
-Public License, version 3.
+Public License, version 3 or (at your option) any later version. The canonical
+version 3 text is included in `LICENSE`.

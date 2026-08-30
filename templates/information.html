@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Project information for La Volasfera Cycle Explorer.">
+    <title>{{ page|title }} · La Volasfera Cycle Explorer</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="{{ url_for('index') }}" aria-label="La Volasfera home">
+        <span aria-hidden="true">LV</span> La Volasfera
+      </a>
+      <span class="header-label">Cycle Explorer</span>
+    </header>
+
+    <main class="page-shell information-page">
+      {% if page == "methodology" %}
+        <p class="eyebrow">Project information</p>
+        <h1>Methodology</h1>
+        <p class="information-lead">How station events are calculated and projected onto each timeline.</p>
+
+        <section>
+          <h2>Reference and anchor</h2>
+          <p>The reference is the birth, event or radix moment from which a cycle is measured. The anchor is the period the user wants to inspect. Both are interpreted as Universal Time (UTC).</p>
+        </section>
+        <section>
+          <h2>True Node stations</h2>
+          <p>The application calculates True North Node longitude and speed on demand with Swiss Ephemeris. A station is refined where longitudinal speed changes sign, then its UTC time is rounded to the nearest second. The supported source range is 1400 through 2100.</p>
+          <p>The default selector samples consecutive UTC-day boundaries, omitting most short direct/retrograde pairs that occur within one UTC day. A small number of edge cases identified during full-range validation are handled explicitly. This is the event-selection method used by the explorer, not a claim to list every mathematical speed reversal; the code also contains an exhaustive scanner for technical inspection.</p>
+        </section>
+        <section>
+          <h2>Cycle projections</h2>
+          <p>For a source station <em>S</em> and reference <em>R</em>, a direct event is <em>R + (S − R) × factor</em>. A converse event mirrors the source interval: <em>R + (R − S) × factor</em>.</p>
+          <dl class="factor-list">
+            <div><dt>Node Transit Converse</dt><dd>Factor 1; the station interval is reflected around the reference.</dd></div>
+            <div><dt>Secondary Progression</dt><dd>Factor 365.242199074074; approximately one ephemeris day represents one tropical year.</dd></div>
+            <div><dt>Tertiary Progression</dt><dd>Factor 29.530588857; one synodic lunar month is used as the projection factor.</dd></div>
+            <div><dt>Minor Progression</dt><dd>Factor 12.368266432; the monthly-to-yearly ratio is used as the projection factor.</dd></div>
+          </dl>
+          <p>Converse timelines are shown by default. Direct secondary, tertiary and minor progressions are optional comparisons; there is no direct Node Transit timeline.</p>
+        </section>
+        <section>
+          <h2>Validation and interpretation</h2>
+          <p>Automated validation covers the supported 1400–2100 range, comparing timestamps to within one second and requiring exact positions and directions.</p>
+          <p>La Volasfera images are selected from the station's zodiac degree. Astrology is an interpretive tradition; the results are not scientific, medical, legal or financial advice.</p>
+        </section>
+      {% elif page == "sources" %}
+        <p class="eyebrow">Project information</p>
+        <h1>Sources</h1>
+        <p class="information-lead">Primary texts, software and ephemeris data used by the application.</p>
+
+        <section>
+          <h2>La Volasfera symbolic degrees</h2>
+          <p>The images and interpretations were transcribed from Charubel and Sepharial, <cite>The Degrees of the Zodiac Symbolized</cite> (1902). The La Volasfera text is attributed in that edition to Sepharial (Walter Gorn Old, 1864–1929).</p>
+          <p><a href="https://iapsop.com/ssoc/1902__charubel___degrees_of_the_zodiac_symbolized.pdf">Read the 1902 digital scan</a>.</p>
+          <p>The source edition is in the public domain. The structured transcription contains La Volasfera material only; it does not contain Sabian symbols or modern third-party commentary.</p>
+        </section>
+        <section>
+          <h2>Swiss Ephemeris</h2>
+          <p>True Node calculations use Swiss Ephemeris through the <code>pysweph</code> Python package. The two required lunar files are downloaded from official Swiss Ephemeris commit <code>b51a083390bf3cdc93a6ba466cbc83b846c4cfc4</code> and verified against pinned SHA-256 hashes during deployment.</p>
+          <p><a href="https://github.com/aloistr/swisseph">Swiss Ephemeris source and licensing information</a>.</p>
+        </section>
+      {% elif page == "licence" %}
+        <p class="eyebrow">Project information</p>
+        <h1>Licence</h1>
+        <p class="information-lead">La Volasfera Cycle Explorer is free and open-source software.</p>
+
+        <section>
+          <h2>Application licence</h2>
+          <p>Copyright © 2026 Harish Patel. The application is distributed under the GNU Affero General Public License, version 3 or (at your option) any later version (AGPL-3.0-or-later).</p>
+          <p><a href="{{ url_for('licence_text') }}">Read the complete AGPL-3.0 licence text</a> or <a href="{{ source_code_url }}">view the complete source code</a>.</p>
+        </section>
+        <section>
+          <h2>Third-party software</h2>
+          <p>The calculation engine uses Swiss Ephemeris through <code>pysweph</code>. Swiss Ephemeris is offered under a dual-licensing model that includes the GNU Affero General Public License. This independent project is not affiliated with or endorsed by Astrodienst AG.</p>
+          <p>See the <a href="{{ url_for('sources') }}">Sources page</a> for the ephemeris revision and original degree text.</p>
+        </section>
+      {% endif %}
+    </main>
+
+    {% include "_footer.html" %}
+  </body>
+</html>

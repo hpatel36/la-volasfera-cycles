@@ -85,7 +85,7 @@ def julian_day_to_datetime(julian_day: float) -> datetime:
 
 
 def position_degree(longitude: float) -> str:
-    """Format longitude using AstriumLab's rounded degree/sign/minute notation."""
+    """Format longitude using rounded degree/sign/minute notation."""
     longitude %= 360.0
     sign_index = int(longitude // 30.0)
     within_sign = longitude - sign_index * 30.0
@@ -271,7 +271,7 @@ def find_true_node_stations(
     start_utc: datetime,
     end_utc: datetime,
 ) -> list[NodeStation]:
-    """Calculate stations using AstriumLab's UTC-day-boundary selection rule.
+    """Calculate stations using the explorer's UTC-day-boundary selection rule.
 
     The legacy data omits a short direct/retrograde pair when both crossings
     occur between the same two UTC midnights. Sampling the speed at consecutive

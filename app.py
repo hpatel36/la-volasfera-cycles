@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_file
 
 from calculations.cycles import generate_cycle_events
 from calculations.degree_definitions import lookup_la_volasfera
@@ -13,6 +14,8 @@ from calculations.ephemeris import configure_ephemeris
 
 
 UTC = timezone.utc
+PROJECT_ROOT = Path(__file__).resolve().parent
+SOURCE_CODE_URL = "https://github.com/hpatel36/la-volasfera-cycles"
 TIMELINE_SPECS = (
     {
         "label": "Node Transit Converse",
@@ -114,6 +117,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     application = Flask(__name__)
     application.config.from_mapping(
         EPHEMERIS_REQUIRED=environment_flag("EPHEMERIS_REQUIRED"),
+        MAX_CONTENT_LENGTH=16 * 1024,
     )
 
     if test_config:
@@ -123,6 +127,22 @@ def create_app(test_config: dict | None = None) -> Flask:
         application.extensions["ephemeris_path"] = configure_ephemeris()
 
     application.jinja_env.globals["degree_definition"] = lookup_la_volasfera
+    application.jinja_env.globals["source_code_url"] = SOURCE_CODE_URL
+
+    @application.after_request
+    def add_security_headers(response):
+        """Apply conservative browser protections to every response."""
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; base-uri 'self'; form-action 'self'; "
+            "frame-ancestors 'none'; object-src 'none'"
+        )
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Permissions-Policy"] = (
+            "camera=(), geolocation=(), microphone=(), payment=()"
+        )
+        return response
 
     @application.route("/", methods=["GET", "POST"])
     def index():
@@ -168,6 +188,22 @@ def create_app(test_config: dict | None = None) -> Flask:
     @application.get("/health")
     def health():
         return jsonify(status="ok")
+
+    @application.get("/methodology")
+    def methodology():
+        return render_template("information.html", page="methodology")
+
+    @application.get("/sources")
+    def sources():
+        return render_template("information.html", page="sources")
+
+    @application.get("/licence")
+    def licence():
+        return render_template("information.html", page="licence")
+
+    @application.get("/licence/text")
+    def licence_text():
+        return send_file(PROJECT_ROOT / "LICENSE", mimetype="text/plain")
 
     return application
 

@@ -1,4 +1,4 @@
-"""Compare generated True Node stations with an AstriumLab database."""
+"""Compare generated True Node stations with a read-only reference database."""
 
 from __future__ import annotations
 
