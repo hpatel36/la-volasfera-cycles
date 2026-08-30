@@ -12,3 +12,12 @@ def test_health_check(client):
     assert response.status_code == 200
     assert response.get_json() == {"status": "ok"}
 
+
+def test_required_ephemeris_is_configured(monkeypatch, tmp_path):
+    import app
+
+    monkeypatch.setattr(app, "configure_ephemeris", lambda: tmp_path)
+
+    application = app.create_app({"TESTING": True, "EPHEMERIS_REQUIRED": True})
+
+    assert application.extensions["ephemeris_path"] == tmp_path

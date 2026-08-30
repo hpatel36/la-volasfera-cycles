@@ -22,9 +22,11 @@ instance/
 *.sqlite3
 *.log
 
+# Swiss Ephemeris binary data is downloaded during the Render build
+ephe/*.se1
+
 # Editors and operating systems
 .idea/
 .vscode/
 .DS_Store
 Thumbs.db
-

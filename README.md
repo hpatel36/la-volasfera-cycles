@@ -30,6 +30,29 @@ Run the tests with:
 python -m pytest
 ```
 
+## Swiss Ephemeris data
+
+True Node calculations from 1400 through 2100 require the lunar files
+`semo_12.se1` and `semo_18.se1`. Binary `.se1` files are deliberately excluded
+from Git. Download the exact tested versions with:
+
+```bat
+python scripts\download_ephemeris.py
+```
+
+The downloader uses an official Swiss Ephemeris GitHub revision and verifies
+both files with pinned SHA-256 checksums. Set `SE_EPHE_PATH` to use a different
+local directory. Render downloads the files into `./ephe` during its build and
+starts the application with strict validation enabled.
+
+For a local strict-startup check in Command Prompt:
+
+```bat
+set EPHEMERIS_REQUIRED=true
+set SE_EPHE_PATH=ephe
+python -m flask --app app run --debug
+```
+
 ## Deployment
 
 The repository includes a `render.yaml` Blueprint for a free Render web
@@ -40,4 +63,3 @@ data, and made public before the Swiss Ephemeris-powered service is activated.
 
 The project is intended to be distributed under the GNU Affero General Public
 License, version 3. See `LICENSE` and `NOTICE.md`.
-

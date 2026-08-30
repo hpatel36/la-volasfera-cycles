@@ -3,8 +3,12 @@ services:
     name: la-volasfera-cycles
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python scripts/download_ephemeris.py
     startCommand: gunicorn app:app
     healthCheckPath: /health
     autoDeploy: true
-
+    envVars:
+      - key: SE_EPHE_PATH
+        value: ./ephe
+      - key: EPHEMERIS_REQUIRED
+        value: "true"
