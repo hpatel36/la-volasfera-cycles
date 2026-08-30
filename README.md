@@ -6,9 +6,9 @@ developed as a free companion tool for La Volasfera articles.
 
 ## Project status
 
-The Flask and Render foundation is in place. The calculation engine will be
-added only after its outputs have been locked down with regression examples
-from the private AstriumLab desktop application.
+The Flask and Render foundation and the True Node cycle calculation engine are
+in place. The web interface for entering reference and anchor dates is the next
+development stage.
 
 ## Local development
 
@@ -52,6 +52,26 @@ set EPHEMERIS_REQUIRED=true
 set SE_EPHE_PATH=ephe
 python -m flask --app app run --debug
 ```
+
+## Calculation engine
+
+`calculations/node_stations.py` calculates True North Node stationary events
+from Swiss Ephemeris data at request time. It does not use a deployed database.
+The default station selector reproduces the historical AstriumLab event set;
+an exhaustive scanner is also available for inspecting every stable speed sign
+change, including short-lived pairs outside that compatibility set.
+
+`calculations/cycles.py` supports transit, secondary, tertiary and minor
+timelines in both direct and converse directions. A full local regression
+generates all 35,002 compatibility events from 1400 through 2100 and compares
+them with a read-only AstriumLab database:
+
+```bat
+python scripts\regress_node_stations.py C:\path\to\astrology.db
+```
+
+The database is a development-only regression oracle and is never included in
+this repository or required by the deployed application.
 
 ## Deployment
 
