@@ -3,42 +3,153 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta
-      name="description"
-      content="Explore True North Node cycles using La Volasfera degree meanings."
-    >
+    <meta name="description" content="Explore True North Node converse cycles.">
     <title>La Volasfera Cycle Explorer</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/main.css') }}"
-    >
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   </head>
   <body>
+    <header class="site-header">
+      <a class="wordmark" href="{{ url_for('index') }}" aria-label="La Volasfera home">
+        <span aria-hidden="true">LV</span> La Volasfera
+      </a>
+      <span class="header-label">Cycle Explorer</span>
+    </header>
+
     <main class="page-shell">
       <section class="hero" aria-labelledby="page-title">
         <p class="eyebrow">La Volasfera</p>
-        <h1 id="page-title">Cycle Explorer</h1>
+        <h1 id="page-title">The rhythm behind the moment.</h1>
         <p class="introduction">
-          A free tool for examining True North Node stationary points and
-          converse astrological cycles.
+          Explore True North Node stations reflected through converse transit,
+          secondary, tertiary and minor progressions.
         </p>
-
-        <div class="status-card" role="status">
-          <span class="status-dot" aria-hidden="true"></span>
-          <div>
-            <strong>Foundation running</strong>
-            <p>The verified calculation interface is the next milestone.</p>
-          </div>
-        </div>
       </section>
+
+      <section class="calculator" aria-labelledby="calculator-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Calculate</p>
+            <h2 id="calculator-title">Set the reference point</h2>
+          </div>
+          <p>Dates and times are entered in Universal Time (UTC).</p>
+        </div>
+
+        <form method="post" action="{{ url_for('index') }}#results" class="calculation-form">
+          <label class="field">
+            <span>Reference date and time</span>
+            <small>The birth, event or radix moment.</small>
+            <input type="datetime-local" name="reference" value="{{ form_values.reference }}" required>
+          </label>
+          <label class="field">
+            <span>Anchor date and time</span>
+            <small>The period you want to examine.</small>
+            <input type="datetime-local" name="anchor" value="{{ form_values.anchor }}" required>
+          </label>
+          <label class="switch-row">
+            <span>
+              <strong>Show direct progressions</strong>
+              <small>Add secondary, tertiary and minor direct comparisons.</small>
+            </span>
+            <span class="switch">
+              <input type="checkbox" name="show_direct" {% if form_values.show_direct %}checked{% endif %}>
+              <span aria-hidden="true"></span>
+            </span>
+          </label>
+          <button type="submit">Explore cycles <span aria-hidden="true">→</span></button>
+        </form>
+
+        {% if error_message %}
+          <div class="error-message" role="alert">
+            <strong>Unable to calculate</strong>
+            <p>{{ error_message }}</p>
+          </div>
+        {% endif %}
+      </section>
+
+      {% if timelines is not none %}
+        <section class="results" id="results" aria-labelledby="results-title">
+          <div class="section-heading results-heading">
+            <div>
+              <p class="eyebrow">Results</p>
+              <h2 id="results-title">Cycles around your anchor</h2>
+            </div>
+            <p>Four stations before and four stations after the anchor.</p>
+          </div>
+          <div class="timeline-list">
+            {% for timeline in timelines %}
+              <details class="timeline-card" {% if loop.first %}open{% endif %}>
+                <summary>
+                  <span class="timeline-number">{{ "%02d"|format(loop.index) }}</span>
+                  <span class="timeline-title">
+                    <strong>{{ timeline.label }}</strong>
+                    <small>{{ timeline.description }}</small>
+                  </span>
+                  <span class="timeline-nearest">
+                    Nearest
+                    <time datetime="{{ timeline.nearest.projected_dt_utc.isoformat() }}">
+                      {{ timeline.nearest.projected_dt_utc.strftime("%d %b %Y") }}
+                    </time>
+                  </span>
+                  <span class="chevron" aria-hidden="true"></span>
+                </summary>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">Projected date (UTC)</th>
+                        <th scope="col">Station</th>
+                        <th scope="col">Position</th>
+                        <th scope="col">La Volasfera</th>
+                        <th scope="col">Source date (UTC)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for event in timeline.events %}
+                        <tr>
+                          <td data-label="Projected">
+                            <time datetime="{{ event.projected_dt_utc.isoformat() }}">
+                              {{ event.projected_dt_utc.strftime("%d %b %Y · %H:%M") }}
+                            </time>
+                          </td>
+                          <td data-label="Station">
+                            <span class="direction direction-{{ event.source_station.direction|lower }}">
+                              {{ "Retrograde" if event.source_station.direction == "R" else "Direct" }}
+                            </span>
+                          </td>
+                          <td data-label="Position" class="position">{{ event.source_station.position_degree }}</td>
+                          <td data-label="La Volasfera">
+                            {% set definition = degree_definition(event.source_station.position_degree) %}
+                            <details class="degree-meaning">
+                              <summary>{{ definition.title }}</summary>
+                              <div>
+                                <strong>Image</strong>
+                                <p>{{ definition.image }}</p>
+                                <strong>Interpretation</strong>
+                                <p>{{ definition.interpretation }}</p>
+                              </div>
+                            </details>
+                          </td>
+                          <td data-label="Source">
+                            <time datetime="{{ event.source_station.dt_utc.isoformat() }}">
+                              {{ event.source_station.dt_utc.strftime("%d %b %Y · %H:%M") }}
+                            </time>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
     </main>
 
     <footer>
-      <p>
-        Independent open-source software. Calculations will use Swiss
-        Ephemeris; this project is not endorsed by Astrodienst.
-      </p>
+      <p>Independent open-source software using Swiss Ephemeris and the public-domain 1902 degree text.</p>
+      <p>Times are shown in UTC.</p>
     </footer>
   </body>
 </html>
-

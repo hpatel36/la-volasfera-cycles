@@ -6,9 +6,9 @@ developed as a free companion tool for La Volasfera articles.
 
 ## Project status
 
-The Flask and Render foundation and the True Node cycle calculation engine are
-in place. The web interface for entering reference and anchor dates is the next
-development stage.
+The Flask and Render foundation, True Node calculation engine and responsive
+cycle-explorer interface are in place. Converse timelines are shown by default;
+secondary, tertiary and minor direct comparisons can be enabled separately.
 
 ## Local development
 
