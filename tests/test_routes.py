@@ -93,8 +93,11 @@ def test_calculation_shows_four_converse_timelines(monkeypatch):
     assert response.status_code == 200
     assert b"Node Transit Converse" in response.data
     assert b"Secondary Progression" in response.data
+    assert "Secondary converse cycle · 1 day represents 1 year".encode() in response.data
     assert b"Tertiary Progression" in response.data
+    assert "Tertiary converse cycle · 1 day represents 1 lunar month".encode() in response.data
     assert b"Minor Progression" in response.data
+    assert "Minor converse cycle · 1 lunar month represents 1 year".encode() in response.data
     assert b"Secondary Progression \xe2\x80\x94 Direct" not in response.data
 
 
@@ -110,8 +113,11 @@ def test_direct_switch_adds_three_comparison_timelines(monkeypatch):
 
     assert response.status_code == 200
     assert b"Secondary Progression \xe2\x80\x94 Direct" in response.data
+    assert "Secondary direct cycle · 1 day represents 1 year".encode() in response.data
     assert b"Tertiary Progression \xe2\x80\x94 Direct" in response.data
+    assert "Tertiary direct cycle · 1 day represents 1 lunar month".encode() in response.data
     assert b"Minor Progression \xe2\x80\x94 Direct" in response.data
+    assert "Minor direct cycle · 1 lunar month represents 1 year".encode() in response.data
     assert b"Node Transit Direct" not in response.data
 
 
