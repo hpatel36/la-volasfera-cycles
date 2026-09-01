@@ -311,10 +311,12 @@ tbody tr:hover { background: rgb(255 255 255 / 2%); }
 .degree-meaning summary {
   color: var(--accent);
   font-size: 0.75rem;
+  line-height: 1.35;
   text-decoration: underline;
   text-decoration-color: rgb(207 170 100 / 45%);
   text-underline-offset: 0.2rem;
   cursor: pointer;
+  white-space: normal;
 }
 
 .degree-meaning > div {
