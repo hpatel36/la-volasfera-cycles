@@ -4,36 +4,114 @@ La Volasfera Cycle Explorer is a small Flask web application for examining
 True North Node stationary points and converse astrological cycles. It is being
 developed as a free companion tool for La Volasfera articles.
 
+- [Use the hosted Cycle Explorer](https://la-volasfera-cycles.onrender.com/)
+- [Read the methodology](https://la-volasfera-cycles.onrender.com/methodology)
+
+The hosted application runs on Render's Free plan, so its first page load after
+a period of inactivity can take up to a minute. Running the application locally
+avoids that delay and keeps all entered dates on your own computer.
+
 ## Project status
 
-The Flask and Render foundation, True Node calculation engine and responsive
-cycle-explorer interface are in place. Converse timelines are shown by default;
-secondary, tertiary and minor direct comparisons can be enabled separately.
+The public application includes a True Node calculation engine and a responsive
+cycle-explorer interface. Converse timelines are shown by default; secondary,
+tertiary and minor direct comparisons can be enabled separately.
 
-## Local development
+## Run locally
 
-The project currently uses Python 3.13.6.
+The project is tested with Python 3.13.6. You need Python 3 and an internet
+connection during the initial installation. Git is required only if you clone
+the repository; alternatively, select **Code > Download ZIP** on GitHub and
+extract the downloaded folder.
+
+### Download the project with Git
+
+```text
+git clone https://github.com/hpatel36/la-volasfera-cycles.git
+cd la-volasfera-cycles
+```
+
+If you downloaded the ZIP instead, open a terminal in the extracted project
+folder (usually named `la-volasfera-cycles-main`) before continuing.
+
+### Windows Command Prompt
 
 ```bat
 py -3 -m venv .venv
 .\.venv\Scripts\activate.bat
-python -m pip install -r requirements-dev.txt
-python -m flask --app app run --debug
+python -m pip install -r requirements.txt
+python scripts\download_ephemeris.py
+set EPHEMERIS_REQUIRED=true
+set SE_EPHE_PATH=ephe
+python -m flask --app app run
 ```
 
-Open <http://127.0.0.1:5000> in a browser. The health endpoint is available at
-<http://127.0.0.1:5000/health>.
+### Windows PowerShell
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python scripts\download_ephemeris.py
+$env:EPHEMERIS_REQUIRED = "true"
+$env:SE_EPHE_PATH = "ephe"
+python -m flask --app app run
+```
+
+If PowerShell prevents `Activate.ps1` from running, use the Windows Command
+Prompt instructions instead.
+
+### macOS or Linux
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python scripts/download_ephemeris.py
+export EPHEMERIS_REQUIRED=true
+export SE_EPHE_PATH=ephe
+python -m flask --app app run
+```
+
+### Open and stop the application
+
+When the terminal displays `Running on http://127.0.0.1:5000`, open
+<http://127.0.0.1:5000/> in your browser.
+
+Keep the terminal open while using the application. To stop it cleanly, return
+to the terminal and press **Ctrl+C**.
+
+### Subsequent launches
+
+You only need to create the virtual environment, install the dependencies and
+download the ephemeris files once. On subsequent launches:
+
+1. Open a terminal in the project folder.
+2. Activate `.venv` using the command for your operating system above.
+3. Set `EPHEMERIS_REQUIRED` and `SE_EPHE_PATH` again.
+4. Run `python -m flask --app app run`.
+
+If you update the local copy from GitHub and `requirements.txt` changes, run
+`python -m pip install -r requirements.txt` again.
+
+## Development checks
+
+Install the development dependencies with:
+
+```text
+python -m pip install -r requirements-dev.txt
+```
 
 Run the tests with:
 
-```bat
+```text
 python -m pytest
 ```
 
 Run the strict deployment smoke test against downloaded ephemeris files with:
 
-```bat
-python scripts\verify_release.py --ephe-path ephe
+```text
+python scripts/verify_release.py --ephe-path ephe
 ```
 
 ## Swiss Ephemeris data
@@ -42,8 +120,8 @@ True Node calculations from 1400 through 2100 require the lunar files
 `semo_12.se1` and `semo_18.se1`. Binary `.se1` files are deliberately excluded
 from Git. Download the exact tested versions with:
 
-```bat
-python scripts\download_ephemeris.py
+```text
+python scripts/download_ephemeris.py
 ```
 
 The downloader uses an official Swiss Ephemeris GitHub revision and verifies
@@ -51,13 +129,9 @@ both files with pinned SHA-256 checksums. Set `SE_EPHE_PATH` to use a different
 local directory. Render downloads the files into `./ephe` during its build and
 starts the application with strict validation enabled.
 
-For a local strict-startup check in Command Prompt:
-
-```bat
-set EPHEMERIS_REQUIRED=true
-set SE_EPHE_PATH=ephe
-python -m flask --app app run --debug
-```
+The local instructions above enable strict validation so the application stops
+with an error rather than silently using fallback calculations if either file
+is missing or incorrect.
 
 ## Calculation engine
 
@@ -82,13 +156,9 @@ accounts or calculation results. Render's filesystem is ephemeral, which is
 appropriate because the downloaded files are recreated on every build and the
 application has no database or user uploads.
 
-The repository must remain private until the final public-release review. Make
-it public before activating the Swiss Ephemeris-powered service so every user
-can obtain the corresponding AGPL source.
-
 ## Project information
 
-- [Methodology](https://github.com/hpatel36/la-volasfera-cycles/blob/main/templates/information.html)
+- [Methodology](https://la-volasfera-cycles.onrender.com/methodology)
 - [Source references](SOURCES.md)
 - [Third-party notices](NOTICE.md)
 - [Complete licence](LICENSE)
