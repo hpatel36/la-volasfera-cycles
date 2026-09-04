@@ -5,7 +5,8 @@ True North Node stationary points and converse astrological cycles. It is being
 developed as a free companion tool for La Volasfera articles.
 
 - [Use the hosted Cycle Explorer](https://la-volasfera-cycles.onrender.com/)
-- [Read the methodology](https://la-volasfera-cycles.onrender.com/methodology)
+- [Read the illustrated introduction and instructions](https://lavolasferaastrology.substack.com/p/when-the-true-north-node-stands-still)
+- [Read the calculation methodology](https://la-volasfera-cycles.onrender.com/methodology)
 
 The hosted application runs on Render's Free plan, so its first page load after
 a period of inactivity can take up to a minute. Running the application locally
