@@ -24,8 +24,11 @@ instance/
 *.sqlite3
 *.log
 
-# Swiss Ephemeris binary data is downloaded during the Render build
+# Swiss Ephemeris binary data is downloaded during hosted builds
 ephe/*.se1
+
+# Local Vercel project metadata
+.vercel/
 
 # Editors and operating systems
 .idea/

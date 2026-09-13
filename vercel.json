@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "flask",
+  "fluid": true,
+  "buildCommand": "python scripts/download_ephemeris.py",
+  "functions": {
+    "app.py": {
+      "includeFiles": "{ephe/**,templates/**,static/**,data/**,LICENSE}",
+      "excludeFiles": "{tests/**,scripts/**}"
+    }
+  }
+}
